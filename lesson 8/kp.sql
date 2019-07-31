@@ -1,28 +1,42 @@
+
 CREATE DATABASE IF NOT EXISTS kp;
 USE kp;
-
+-- Таблица Кинофильмов
 DROP TABLE IF EXISTS movies;
 CREATE TABLE IF NOT EXISTS movies (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     country VARCHAR(255) NOT NULL,
-    release_date DATE
-    
+    release_date DATE,
+    poster_id INT UNSIGNED COMMENT 'Постер, афиша на главной странице фильма',
+    trailer_id INT UNSIGNED COMMENT 'Трейлер на главной странице фильма',
+    INDEX  movies_id_indx (id),
+	CONSTRAINT movies_poster_id_fk FOREIGN KEY (poster_id) REFERENCES media(id) , 
+    CONSTRAINT movies_trailer_id_fk FOREIGN KEY (trailer_id) REFERENCES media(id) 
     );
-
-DROP TABLE persons;
-CREATE TABLE persons(
+-- Таблица людей задейсвованных в создании фильма без привязки к их професии 
+DROP TABLE  IF EXISTS persons;
+CREATE TABLE  IF NOT EXISTS persons(
     id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     firstname VARCHAR(50) NOT NULL,
     lastname VARCHAR(50) NOT NULL,
     sex CHAR(1) NOT NULL,
     birthday DATE,
     hometown VARCHAR(100),
-    photo_id INT UNSIGNED NOT NULL
-
+    photo_id INT UNSIGNED NOT NULL,
+    CONSTRAINT persons_photo_id_fk FOREIGN KEY (photo_id) REFERENCES media(id) 
 
     );
-  
+ 
+-- Таблица професий людей задействованных в создании фильма (актеров, режисеров, сценаристов, сценаристов и т.п.)
+DROP TABLE profession_types;
+CREATE TABLE profession_types(   
+	id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    profession VARCHAR(255) NOT NULL
+
+);
+ -- В этой таблице я связываю фильм, имя человека и в качетве кого он был в этом фильме.
+ -- Я так сделал потому что в одном фильме человек может играть как актер , но вдругом выспупать в качесве режисера и т.п
 DROP TABLE IF EXISTS movie_creators;
 CREATE TABLE IF NOT EXISTS movie_creators(   
 	person_id INT UNSIGNED NOT NULL,
@@ -35,15 +49,16 @@ CREATE TABLE IF NOT EXISTS movie_creators(
     
 ); 
     
-   
-    
-DROP TABLE profession_types;
-CREATE TABLE profession_types(   
+-- Таблица типов жанров  без привязки к конкретному к фильму . Драма, боевик, комедия и т.п. 
+DROP TABLE  IF EXISTS genre_types;
+CREATE TABLE IF NOT EXISTS  genre_types(   
 	id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    profession VARCHAR(255) NOT NULL
+    genre VARCHAR(255) NOT NULL
 
 );
+  
 
+-- Таблица жанров конкретного фильма. Зачастую фильм может принимать несколько жанров.Например: боевик, триллер .
 DROP TABLE IF EXISTS movie_genres;
 CREATE TABLE IF NOT EXISTS movie_genres(   
     movie_id INT UNSIGNED NOT NULL,
@@ -54,14 +69,7 @@ CREATE TABLE IF NOT EXISTS movie_genres(
     
 );  
   
-
-DROP TABLE  IF EXISTS genre_types;
-CREATE TABLE IF NOT EXISTS  genre_types(   
-	id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    genre VARCHAR(255) NOT NULL
-
-);
-
+-- Таблица пользоватлей которые регистрируются на сайте кинопоиска чтобы ставить оценки. 
 DROP TABLE  IF EXISTS users;
 CREATE TABLE IF NOT EXISTS users (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -74,18 +82,19 @@ CREATE TABLE IF NOT EXISTS users (
   INDEX users_email_idx (email)
 );
 
--- Таблица профилей
+-- Таблица профилей пользователей
 DROP TABLE  IF EXISTS profiles;
 CREATE TABLE  IF NOT EXISTS profiles (
   user_id INT UNSIGNED NOT NULL PRIMARY KEY,
   sex CHAR(1) NOT NULL,
   birthday DATE,
   hometown VARCHAR(100),
-  photo_id INT UNSIGNED NOT NULL,
-  CONSTRAINT profiles_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id)
-  -- CONSTRAINT profiles_photo_id_fk FOREIGN KEY (photo_id) REFERENCES media(id) 
+  photo_id INT UNSIGNED ,
+  CONSTRAINT profiles_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id),
+  CONSTRAINT profiles_photo_id_fk FOREIGN KEY (photo_id) REFERENCES media(id) 
 );
 
+-- Таблица, котрпая хранит оценки  которые ставят пользователи к фильмам. 
 DROP TABLE IF EXISTS  rating;
 CREATE TABLE  IF NOT EXISTS rating (
 	
@@ -101,7 +110,10 @@ CREATE TABLE  IF NOT EXISTS rating (
 
 
 
--- Таблица медиафайлов
+-- Таблица медиафайлов. Здесь по моей задумке могут хранится файлы:
+-- 1. пользователей кторые ставят оценки(например аватар пользователя). 
+-- 2. Фотографии актеров и режисеров, сценаристов и тд.
+-- 3. Фотографии связанные с фильмом (постер, афиша, кадры ) и видеотрейлеры фильма
 DROP TABLE IF EXISTS  media;
 CREATE TABLE IF NOT EXISTS  media (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -138,5 +150,3 @@ CREATE TABLE IF NOT EXISTS  media_types (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
-    

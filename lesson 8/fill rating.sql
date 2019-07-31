@@ -1,18 +1,4 @@
 
-DROP TABLE IF EXISTS  rating;
-CREATE TABLE  IF NOT EXISTS rating (
-	
-    from_user_id INT UNSIGNED NOT NULL,
-    to_movie_id INT UNSIGNED NOT NULL,
-    rating INT UNSIGNED NOT NULL,
-    created_at DATETIME DEFAULT NOW(),
-    PRIMARY KEY (from_user_id, to_movie_id),
-    CONSTRAINT rating_from_user_id_fk FOREIGN KEY (from_user_id) REFERENCES users(id),
-    CONSTRAINT rating_to_movie_id_fk FOREIGN KEY (to_movie_id) REFERENCES movies(id)
-    
-    );
-
-
 SELECT * FROM `rating`;
 
 
