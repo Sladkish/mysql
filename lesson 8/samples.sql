@@ -1,9 +1,4 @@
-SELECT * FROM movies;
-SELECT * FROM rating;
-SELECT * FROM persons;
-SELECT * FROM users;
-SELECT * FROM profession_types;
-SELECT * FROM movie_creators;
+
 -- 25 лучших фильмов
 SELECT name AS movie_name, count(*) as number_ratings, AVG(rating) as total_rating FROM movies
   LEFT JOIN
