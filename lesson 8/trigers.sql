@@ -1,5 +1,3 @@
-(SELECT media_type_id FROM media WHERE id=262);
-(select(SELECT media_type_id FROM media WHERE id=262)!=2);
 
 DELIMITER //
 
